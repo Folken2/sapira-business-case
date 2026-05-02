@@ -171,6 +171,24 @@ def create_purchase_order(
     Returns:
         Dict with the draft PO payload that would be POSTed to SAP.
     """
+    # Defense in depth: the HITL gate (before_agent_callback) should already
+    # have prevented this call when any line is hitl_pending. Refuse anyway
+    # so a future bypass cannot create a PO with unapproved lines.
+    pending = [
+        li.get("line_ref", "?")
+        for li in line_items
+        if li.get("status") == "hitl_pending"
+    ]
+    if pending:
+        return {
+            "status": "error",
+            "error": (
+                f"Refusing to draft PO: {len(pending)} line(s) still pending "
+                f"human review ({', '.join(pending)}). Resolve these via the "
+                f"HITL queue first."
+            ),
+        }
+
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     po_number = f"DRAFT-{project}-{bom_revision}-{timestamp}"
     po = {

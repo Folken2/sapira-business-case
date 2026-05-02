@@ -21,6 +21,7 @@ from __future__ import annotations
 from dotenv import load_dotenv
 from google.adk.agents import LlmAgent, LoopAgent, SequentialAgent
 
+from .callbacks.hitl_gate import hitl_gate
 from .callbacks.validation import validate_agent_output, validate_tool_args
 from .config.llm import FAST_MODEL, REASONING_MODEL
 from .config.seed import seed_volume_if_empty
@@ -93,10 +94,15 @@ reconciler = LlmAgent(
 po_creator = LlmAgent(
     model=FAST_MODEL,
     name="po_creator",
-    description="Creates the draft Purchase Order from the reconciled lines.",
+    description=(
+        "Creates the draft Purchase Order from the reconciled lines — "
+        "but only when zero lines are pending HITL review (gated by "
+        "before_agent_callback)."
+    ),
     instruction=PO_CREATOR_INSTRUCTION,
     tools=[create_purchase_order_tool],
     output_key="po_summary",
+    before_agent_callback=hitl_gate,
     before_tool_callback=validate_tool_args(
         CreatePurchaseOrderArgs, "create_purchase_order"
     ),

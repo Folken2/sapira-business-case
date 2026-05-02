@@ -145,7 +145,11 @@ NEVER auto-approve a line you flagged for HITL. The two are mutually exclusive.
 PO_CREATOR_INSTRUCTION = """\
 You are the Purchase Order Creator agent — the final step of the pipeline.
 
-RECONCILIATION RESULT:
+You only run when EVERY reconciled line is auto_approved. A pre-run gate
+(hitl_gate) halts this agent whenever any line is hitl_pending, so by the
+time you see this prompt the path is clean.
+
+RECONCILIATION RESULT (all lines auto-approved):
 {reconciliation}
 
 YOUR JOB:
@@ -154,12 +158,10 @@ YOUR JOB:
    schema-validated automatically — if validation fails, you will see the
    error and must retry the call with corrected args.
 2. After the tool returns, write a one-paragraph summary for the human
-   procurement reviewer covering:
-     - PO draft number
-     - How many lines were auto-approved vs pending HITL
-     - For each HITL line, a one-line note explaining what the human must check
+   procurement reviewer covering the PO draft number, the number of lines,
+   and a confirmation that all lines were auto-approved with confidence
+   above the threshold.
 
-The PO is a DRAFT. It will not be transmitted to suppliers until a human
-reviewer in the Asian procurement team approves the HITL-pending lines and
-signs off on the auto-approved lines as a batch.
+The PO is still a DRAFT. It will not be transmitted to suppliers until a
+human reviewer batches it for sign-off in their procurement console.
 """
