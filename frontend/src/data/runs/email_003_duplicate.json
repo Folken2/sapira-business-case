@@ -1,0 +1,73 @@
+{
+  "email": {
+    "email_id": "email_003_duplicate",
+    "received_at": "2026-05-02T11:45:00+02:00",
+    "from": "engineering@acerosibericos.es",
+    "to": "procurement-asia@acerosibericos.com",
+    "cc": "director@acerosibericos.es",
+    "subject": "Fwd: Re: HARBOUR-7 — small change in line 2 + extra item",
+    "body": "FYI — fwd to keep director in the loop.\n\n---------- Forwarded message ----------\n\nUpdate to the BOM I sent this morning:\n\n- LINE 2: change galvanized B from 3mm to 5mm. Qty stays 45 TON.\n- NEW LINE 4: stainless 316L sheet 1.5mm, 8 TON.\n\nNote: Order line 4 batch with a +2mm tolerance due to port humidity — we will trim on arrival."
+  },
+  "total_duration_ms": 2140,
+  "steps": [
+    {
+      "index": 0,
+      "agent": "extractor",
+      "loop_iteration": 1,
+      "status": "completed",
+      "duration_ms": 1620,
+      "summary": "Loaded email. Recognized as a forwarded copy of email_002 (same project, same revision body). Classified as DUPLICATE.",
+      "tool_calls": [
+        { "name": "load_email", "args": { "email_id": "email_003_duplicate" }, "result": { "status": "success" } }
+      ],
+      "state_out": {
+        "extraction": {
+          "email_type": "DUPLICATE",
+          "project": "HARBOUR-7",
+          "bom_revision": "v2",
+          "line_items": [],
+          "global_notes": "Duplicate of HARBOUR-7 v2 revision (forwarded copy with director in CC). Body matches the prior email's revision instructions verbatim."
+        }
+      }
+    },
+    {
+      "index": 1,
+      "agent": "validator",
+      "loop_iteration": 1,
+      "status": "completed",
+      "duration_ms": 320,
+      "summary": "DUPLICATE classification is correct (line_items=[], global_notes explains the dedup). Calling exit_validation_loop.",
+      "tool_calls": [
+        { "name": "exit_validation_loop", "args": {}, "result": { "status": "success" } }
+      ]
+    },
+    {
+      "index": 2,
+      "agent": "reconciler",
+      "loop_iteration": null,
+      "status": "completed",
+      "duration_ms": 110,
+      "summary": "Nothing to reconcile (DUPLICATE has no line_items). Empty reconciliation passed downstream.",
+      "state_out": {
+        "reconciliation": {
+          "project": "HARBOUR-7",
+          "bom_revision": "v2",
+          "reconciled_lines": []
+        },
+        "hitl_queue": []
+      }
+    },
+    {
+      "index": 3,
+      "agent": "po_creator",
+      "loop_iteration": null,
+      "status": "completed",
+      "duration_ms": 90,
+      "summary": "No lines to draft a PO for. No artifact written — original email_002 already produced the canonical artifact for this revision."
+    }
+  ],
+  "result": {
+    "kind": "duplicate",
+    "summary": "Email recognised as a forwarded duplicate of HARBOUR-7 v2. No new PO drafted; the canonical artifact lives with the original email_002 run."
+  }
+}

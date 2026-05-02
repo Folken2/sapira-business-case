@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CELO favicon">
+  <rect width="64" height="64" rx="14" fill="#FDD33C" />
+  <path
+    d="M45.5 24.2c-1.7-1.6-4.3-2.9-7.5-2.9-6.1 0-10.8 4.7-10.8 10.9 0 6.2 4.7 10.9 10.8 10.9 3.2 0 5.8-1.3 7.5-2.9l4.9 4.9c-2.8 2.9-7 5.1-12.4 5.1-10.9 0-18.9-8-18.9-18 0-10 7.9-18 18.9-18 5.5 0 9.7 2.2 12.4 5.1l-4.9 4.9z"
+    fill="#111111"
+    transform="translate(-2, 0)"
+  />
+</svg>
