@@ -1,0 +1,16 @@
+"""
+Tools for the agent.
+
+Composes the tool surface from feature bundles. Bundles activated by
+scaffold flags (--persona, --with-composio) are rendered in here; the
+others are absent.
+"""
+
+from .memory_tools import memory_tool_list
+
+
+def get_tools() -> list:
+    """Return the list of tools available to the agent."""
+    tools: list = []
+    tools.extend(memory_tool_list)
+    return tools

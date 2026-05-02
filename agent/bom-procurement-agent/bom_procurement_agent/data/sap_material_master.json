@@ -1,0 +1,22 @@
+{
+  "materials": [
+    {"sap_code": "AC-GALV-TB-001", "description": "Galvanized Steel Type B, sheet, 2.0mm", "grade": "S235JR+Z", "form": "sheet", "thickness_mm": 2.0, "uom": "TON"},
+    {"sap_code": "AC-GALV-TB-002", "description": "Galvanized Steel Type B, sheet, 3.0mm", "grade": "S235JR+Z", "form": "sheet", "thickness_mm": 3.0, "uom": "TON"},
+    {"sap_code": "AC-GALV-TB-003", "description": "Galvanized Steel Type B, sheet, 5.0mm", "grade": "S235JR+Z", "form": "sheet", "thickness_mm": 5.0, "uom": "TON"},
+    {"sap_code": "AC-CR-S275-010", "description": "Cold-rolled steel S275JR, coil, 1.0mm", "grade": "S275JR", "form": "coil", "thickness_mm": 1.0, "uom": "TON"},
+    {"sap_code": "AC-CR-S275-015", "description": "Cold-rolled steel S275JR, coil, 1.5mm", "grade": "S275JR", "form": "coil", "thickness_mm": 1.5, "uom": "TON"},
+    {"sap_code": "AC-HR-S355-040", "description": "Hot-rolled structural steel S355J2, plate, 4.0mm", "grade": "S355J2", "form": "plate", "thickness_mm": 4.0, "uom": "TON"},
+    {"sap_code": "AC-HR-S355-060", "description": "Hot-rolled structural steel S355J2, plate, 6.0mm", "grade": "S355J2", "form": "plate", "thickness_mm": 6.0, "uom": "TON"},
+    {"sap_code": "AC-HR-S355-080", "description": "Hot-rolled structural steel S355J2, plate, 8.0mm", "grade": "S355J2", "form": "plate", "thickness_mm": 8.0, "uom": "TON"},
+    {"sap_code": "AC-SS-304-020", "description": "Stainless steel 304, sheet, 2.0mm", "grade": "AISI 304", "form": "sheet", "thickness_mm": 2.0, "uom": "TON"},
+    {"sap_code": "AC-SS-316L-015", "description": "Stainless steel 316L, sheet, 1.5mm", "grade": "AISI 316L", "form": "sheet", "thickness_mm": 1.5, "uom": "TON"},
+    {"sap_code": "AC-SS-316L-030", "description": "Stainless steel 316L, sheet, 3.0mm", "grade": "AISI 316L", "form": "sheet", "thickness_mm": 3.0, "uom": "TON"},
+    {"sap_code": "AC-TUBE-S235-25", "description": "Steel tube S235JR, round, OD 25mm wall 2mm", "grade": "S235JR", "form": "tube", "thickness_mm": 2.0, "uom": "M"},
+    {"sap_code": "AC-TUBE-S235-50", "description": "Steel tube S235JR, round, OD 50mm wall 3mm", "grade": "S235JR", "form": "tube", "thickness_mm": 3.0, "uom": "M"},
+    {"sap_code": "AC-REBAR-B500-12", "description": "Reinforcing bar B500S, diameter 12mm", "grade": "B500S", "form": "rebar", "thickness_mm": 12.0, "uom": "TON"},
+    {"sap_code": "AC-REBAR-B500-16", "description": "Reinforcing bar B500S, diameter 16mm", "grade": "B500S", "form": "rebar", "thickness_mm": 16.0, "uom": "TON"},
+    {"sap_code": "AC-ALU-5754-020", "description": "Aluminium alloy 5754, sheet, 2.0mm", "grade": "EN AW-5754", "form": "sheet", "thickness_mm": 2.0, "uom": "TON"},
+    {"sap_code": "AC-WELD-ER70-12", "description": "MIG welding wire ER70S-6, 1.2mm spool", "grade": "ER70S-6", "form": "wire", "thickness_mm": 1.2, "uom": "KG"},
+    {"sap_code": "AC-FLAT-S275-50", "description": "Flat bar S275JR, 50x10mm", "grade": "S275JR", "form": "flat_bar", "thickness_mm": 10.0, "uom": "M"}
+  ]
+}

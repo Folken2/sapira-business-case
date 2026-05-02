@@ -1,0 +1,15 @@
+{
+  "email_id": "email_001",
+  "received_at": "2026-05-02T08:14:00+02:00",
+  "from": "engineering@acerosibericos.es",
+  "to": "procurement-asia@acerosibericos.com",
+  "subject": "[BOM] Project HARBOUR-7 — initial spec",
+  "body": "Hola team,\n\nAttached is the initial BOM for project HARBOUR-7. Please proceed with sourcing.\n\nGracias,\nMaría",
+  "attachments": [
+    {
+      "filename": "HARBOUR-7_BOM_v1.pdf",
+      "type": "pdf_extracted_text",
+      "content": "PROJECT: HARBOUR-7\nBOM REVISION: v1\nDATE: 2026-05-02\n\nLINE 1: Hot-rolled structural steel S355J2, plate, 6mm thickness, qty 120 TON\nLINE 2: Galvanized Steel Type B, 3mm sheet, qty 45 TON\nLINE 3: Reinforcing bar B500S, 16mm diameter, qty 30 TON\n"
+    }
+  ]
+}

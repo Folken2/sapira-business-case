@@ -1,0 +1,10 @@
+{
+  "email_id": "email_003",
+  "received_at": "2026-05-02T11:45:00+02:00",
+  "from": "engineering@acerosibericos.es",
+  "to": "procurement-asia@acerosibericos.com",
+  "cc": "director@acerosibericos.es",
+  "subject": "Fwd: Re: HARBOUR-7 — small change in line 2 + extra item",
+  "body": "FYI — fwd to keep director in the loop.\n\n---------- Forwarded message ----------\n\nUpdate to the BOM I sent this morning:\n\n- LINE 2: change galvanized B from 3mm to 5mm. Qty stays 45 TON.\n- NEW LINE 4: stainless 316L sheet 1.5mm, 8 TON.\n\nNote: Order line 4 batch with a +2mm tolerance due to port humidity — we will trim on arrival.\n",
+  "attachments": []
+}
