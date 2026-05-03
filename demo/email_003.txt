@@ -1,0 +1,32 @@
+TO:      procurement-asia@acerosibericos.com
+SUBJECT: Fwd: [BOM] Project HARBOUR-9 — initial spec v1
+ATTACH:  bom_001_harbour9_v1.pdf   (same PDF as email 001 — that's the point)
+
+────────────────────────────────────────────────────────────
+
+Reenvío por si no llegó la primera vez. Han, ¿lo recibiste?
+Necesito confirmación esta semana.
+
+— María
+
+──────── Forwarded message ────────
+De: María Soto <maria.soto@acerosibericos.es>
+Fecha: lun, 4 may 2026 a las 09:14
+Asunto: [BOM] Project HARBOUR-9 — initial spec v1
+Para: <procurement-asia@acerosibericos.com>
+
+Hola team,
+
+Os adjunto el BOM inicial v1 para el proyecto HARBOUR-9 (Bay 4,
+ampliación del puerto de Bilbao). Por favor proceded con sourcing
+cuanto antes — estamos en camino crítico y la fecha de arranque
+de obra es el 15 de junio.
+
+Toda la línea está estandarizada (S355J2, B500S, ER70S-6) y los
+volúmenes son los habituales para este tipo de muelle. No debería
+haber sorpresas.
+
+Cualquier cosa, me decís.
+
+Gracias,
+María Soto

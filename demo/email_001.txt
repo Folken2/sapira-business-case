@@ -1,0 +1,23 @@
+TO:      procurement-asia@acerosibericos.com
+SUBJECT: [BOM] Project HARBOUR-9 — initial spec v1
+ATTACH:  bom_001_harbour9_v1.pdf
+
+────────────────────────────────────────────────────────────
+
+Hola team,
+
+Os adjunto el BOM inicial v1 para el proyecto HARBOUR-9 (Bay 4,
+ampliación del puerto de Bilbao). Por favor proceded con sourcing
+cuanto antes — estamos en camino crítico y la fecha de arranque
+de obra es el 15 de junio.
+
+Toda la línea está estandarizada (S355J2, B500S, ER70S-6) y los
+volúmenes son los habituales para este tipo de muelle. No debería
+haber sorpresas.
+
+Cualquier cosa, me decís.
+
+Gracias,
+María Soto
+Engineering — Aceros Ibéricos
+maria.soto@acerosibericos.es

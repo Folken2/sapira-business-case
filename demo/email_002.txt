@@ -1,0 +1,27 @@
+TO:      procurement-asia@acerosibericos.com
+SUBJECT: [BOM] Project COAST-3 — revisión v2 (URGENTE leer notas)
+ATTACH:  bom_002_coast3_v2.pdf
+
+────────────────────────────────────────────────────────────
+
+Hola,
+
+Os paso la revisión v2 del BOM de COAST-3. Hay cambios respecto a v1
+que vale la pena que reviséis con cuidado:
+
+  · Línea 1: subimos espesor de plate de 6mm a 8mm (decisión
+    estructural, validada por Joaquín).
+  · Línea 5: AÑADIDA — cold-rolled coil ~1.2mm, "premium grade"
+    según spec rev. 4. Engineering aún no ha confirmado el código
+    SAP exacto, así que ojo con esa línea.
+
+He metido notas en el margen del PDF — por favor leedlas antes de
+ordenar nada en línea 5. El equipo de obra reportó un problema de
+tolerancia en el último lote y no quiero repetir el episodio.
+
+Avisadme si algo no cuadra.
+
+Gracias,
+María Soto
+Engineering — Aceros Ibéricos
+maria.soto@acerosibericos.es
