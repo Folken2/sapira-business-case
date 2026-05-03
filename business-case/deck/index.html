@@ -425,7 +425,7 @@
     display: grid;
     grid-template-columns: 3cqi 1fr;
     gap: 1.4cqi;
-    padding: 1cqi 0;
+    padding: 0.7cqi 0;
     border-bottom: 1px dashed var(--rule);
   }
   .recon-step:last-child { border-bottom: none; }
@@ -441,13 +441,14 @@
     font-size: 1.3cqi; font-weight: 500; color: var(--text);
   }
   .recon-step .sub {
-    font-size: 1.05cqi; color: var(--muted); line-height: 1.4;
+    font-size: 1.05cqi; color: var(--muted); line-height: 1.35;
     margin-top: 0.2cqi;
   }
-  .recon-step.gate { background: color-mix(in srgb, var(--hitl) 6%, transparent); margin: 0 -2cqi; padding: 1cqi 2cqi; }
+  .recon-step.gate { background: color-mix(in srgb, var(--hitl) 6%, transparent); margin: 0 -2cqi; padding: 0.7cqi 2cqi; }
   .recon-step.gate .badge { color: var(--hitl); border-color: var(--hitl); }
   .recon-step.gate b { color: var(--hitl); font-weight: 500; }
-  .recon-step.loop { background: color-mix(in srgb, var(--ok) 5%, transparent); margin: 0 -2cqi; padding: 1cqi 2cqi; }
+  .recon-step.loop { background: color-mix(in srgb, var(--ok) 5%, transparent); margin: 0 -2cqi; padding: 0.7cqi 2cqi; }
+  .slide[data-slide="data"] .title { font-size: 5.4cqi; }
   .recon-step.loop .badge { color: var(--ok); border-color: var(--ok); }
   .recon-step.loop .head { color: var(--ok); }
 
@@ -942,7 +943,7 @@
           <h4>Friction #2 — text → SAP code · learns over time</h4>
           <div class="recon-step">
             <div class="badge">1</div>
-            <div><div class="head">Ground-truth map · built from history</div><div class="sub">60 days of past email → PO pairs gives us thousands of "Galv Steel B → AC-GALV-TB-001" mappings on day one.</div></div>
+            <div><div class="head">Ground-truth map · built from history</div><div class="sub">60 days of past email → PO pairs gives us thousands of text → SAP-code mappings on day one.</div></div>
           </div>
           <div class="recon-step">
             <div class="badge">2</div>
