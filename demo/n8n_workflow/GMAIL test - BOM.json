@@ -1,0 +1,290 @@
+{
+  "name": "GMAIL test - BOM",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sapira-business-case-production.up.railway.app/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 600000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -18256,
+        7904
+      ],
+      "id": "d23082cd-de53-4243-a303-a45711be4b7a",
+      "name": "Python: Complete Processing",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -19600,
+        7904
+      ],
+      "id": "c9883263-292c-47b1-a0eb-da32145d74cd",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pygYAXkzJRe3XOt5",
+          "name": "Gmail account - Albert"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -19376,
+        7904
+      ],
+      "id": "73276446-1614-4b7a-a624-824115b808db",
+      "name": "Get a message",
+      "webhookId": "68c2b47f-c36f-4b83-bf45-5843a7c0f1a8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pygYAXkzJRe3XOt5",
+          "name": "Gmail account - Albert"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allowedExtensions = ['xls', 'xlsx', 'pdf', 'zip'];\n  const items = $input.all();\n  const out = [];                                                                                                   \n  \n  for (const item of items) {                                                                                       \n    if (!item.binary) {                                  \n      out.push({ json: item.json });  // pass through, no binary\n      continue;                                                                                                     \n    }\n    const matches = Object.keys(item.binary).filter(key => {                                                        \n      const ext = item.binary[key].fileExtension?.toLowerCase();                                                    \n      return ext && allowedExtensions.includes(ext);                                                                \n    });                                                                                                             \n    if (matches.length === 0) {                                                                                     \n      out.push({ json: item.json });  // no allowed attachments\n    } else {                                                                                                        \n      for (const key of matches) {\n        out.push({ json: item.json, binary: { data: item.binary[key] } });                                          \n      }                                                  \n    }                                                                                                               \n  }                                                      \n\n  return out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -19152,
+        7904
+      ],
+      "id": "9bef25e8-8896-4c57-8f92-eb4b21a907e0",
+      "name": "Filter Attachments",
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();                                                                                       \n  const gmailMsg = $('Get a message').first().json;      \n\n  const emailMetadata = {                                                                                           \n    email_id: gmailMsg.id,\n    from: gmailMsg.from?.value?.[0]?.address || '',                                                                 \n    conversation_id: gmailMsg.threadId,                  \n    subject: gmailMsg.subject || '',                                                                                \n    body: gmailMsg.text || '',\n    date: gmailMsg.date || '',                                                                                      \n  };                                                     \n\n  const attachments = [];\n\n  for (let i = 0; i < items.length; i++) {                                                                          \n    const item = items[i];\n    if (!item.binary?.data) continue;                                                                               \n    const fileName = item.binary.data.fileName || `attachment_${i}`;\n    const mimeType = item.binary.data.mimeType || 'application/pdf';                                                \n    try {\n      const buf = await this.helpers.getBinaryDataBuffer(i, 'data');                                                \n      attachments.push({                                                                                            \n        file_data: buf.toString('base64'),\n        file_name: fileName,                                                                                        \n        mime_type: mimeType,                             \n      });\n    } catch (e) {\n      console.error(`Failed ${fileName}: ${e.message}`);\n    }                                                                                                               \n  }\n                                                                                                                    \n  // Build ADK parts array — text always; inlineData only if attachments exist                                      \n  const parts = [\n    {                                                                                                               \n      text:                                              \n        `From: ${emailMetadata.from}\\n` +\n        `Subject: ${emailMetadata.subject}\\n` +                                                                     \n        `Email-ID: ${emailMetadata.email_id}\\n` +\n        `Date: ${emailMetadata.date}\\n\\n` +                                                                         \n        emailMetadata.body,                                                                                         \n    },\n    ...attachments.map(a => ({                                                                                      \n      inlineData: {                                      \n        displayName: a.file_name,\n        mimeType: a.mime_type,                                                                                      \n        data: a.file_data,\n      },                                                                                                            \n    })),                                                 \n  ];\n\n  return [{ json: { attachments, email_metadata: emailMetadata, parts } }];                                         \n                                                                       \n   "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -18928,
+        7904
+      ],
+      "id": "2e5b296d-207b-40b5-85dc-252dec11df4f",
+      "name": "Prepare Python Request",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={                                                                                                                 \n    \"appName\": \"bom_procurement_agent\",                  \n    \"userId\": \"n8n\",\n    \"sessionId\": \"{{ $('Create Session').item.json.id }}\",                                                          \n    \"newMessage\": {\n      \"role\": \"user\",                                                                                               \n      \"parts\": {{ JSON.stringify($('Prepare Python Request').item.json.parts) }}\n    },                                                                                                              \n    \"streaming\": false\n  }                                                        ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -18480,
+        7904
+      ],
+      "id": "1a74ed24-19b0-493b-b782-aef7a94bb139",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sapira-business-case-production.up.railway.app/apps/bom_procurement_agent/users/n8n/sessions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"state\": {} }            ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -18704,
+        7904
+      ],
+      "id": "9b62ce4f-8bc7-453c-8378-3f990b8453ba",
+      "name": "Create Session"
+    },
+    {
+      "parameters": {
+        "jsCode": "  // HTTP node split the events array into N items — collect them all                          \n  const eventList = $input.all().map(i => i.json);                                             \n                                                                                               \n  // Fold all stateDeltas in order to get final state                                          \n  const state = {};                                      \n  for (const ev of eventList) {                                                                \n    const delta = ev?.actions?.stateDelta || {};         \n    for (const [k, v] of Object.entries(delta)) {                                              \n      if (k.startsWith('_')) continue;\n      state[k] = v;                                                                            \n    }                                                    \n  }                                                                                            \n                                                         \n  let extraction = state.extraction;                                                           \n  if (typeof extraction === 'string') {\n    try { extraction = JSON.parse(extraction.replace(/^```json\\s*|\\s*```$/g, '')); }           \n    catch { extraction = {}; }                                                                 \n  }\n                                                                                               \n  const emailType = extraction?.email_type || 'UNKNOWN';                                       \n  const draftPO   = state.draft_purchase_order || null;\n  const hitlQueue = Array.isArray(state.hitl_queue) ? state.hitl_queue : [];                   \n  const summary   = state.po_summary || '';              \n                                                                                               \n  let outcome;                                           \n  if (draftPO)                         outcome = 'po_drafted';                                 \n  else if (hitlQueue.length > 0)       outcome = 'hitl_review';                                \n  else if (emailType === 'DUPLICATE')  outcome = 'duplicate';\n  else                                 outcome = 'no_action';                                  \n                                                         \n  const orig = $('Get a message').first().json;                                                \n  const replyTo = orig.from?.value?.[0]?.address;        \n                                                                                               \n  const subjectByOutcome = {                                                                   \n    po_drafted:  `[BOM Pipeline] Draft PO ready: ${draftPO?.po_number || ''}`,                 \n    hitl_review: `[BOM Pipeline] Review needed (${hitlQueue.length} lines)`,                   \n    duplicate:   `[BOM Pipeline] Email classified as duplicate / non-BOM`,                     \n    no_action:   `[BOM Pipeline] No action taken`,                                             \n  };                                                                                           \n                                                                                               \n  return [{                                              \n    json: {\n      outcome,\n      email_type: emailType,\n      summary,                                                                                 \n      draft_po: draftPO,\n      hitl_queue: hitlQueue,                                                                   \n      extraction,                                        \n      reply_to: replyTo,\n      reply_subject: subjectByOutcome[outcome],\n      reply_body_html: `<p>${summary || 'Pipeline completed.'}</p>` +                          \n        (draftPO ? `<p><b>PO:</b> ${draftPO.po_number}</p>` : '') +                            \n        (hitlQueue.length ? `<p><b>HITL items:</b> ${hitlQueue.length}</p>` : ''),             \n    },                                                                                         \n  }];                                                         "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -18032,
+        7904
+      ],
+      "id": "1d920b17-555b-425c-ad17-2c107a9083be",
+      "name": "Parse output"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.reply_to }}",
+        "subject": "={{ $json.reply_subject }}",
+        "message": "={{ $json.reply_body_html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -17808,
+        7904
+      ],
+      "id": "bf7f6492-f289-43ca-98ea-8f446f32a875",
+      "name": "Send a message1",
+      "webhookId": "c476dcf0-38b9-4e30-ba89-358f749910a5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pygYAXkzJRe3XOt5",
+          "name": "Gmail account - Albert"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Python: Complete Processing": {
+      "main": [
+        [
+          {
+            "node": "Parse output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Filter Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Attachments": {
+      "main": [
+        [
+          {
+            "node": "Prepare Python Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Python Request": {
+      "main": [
+        [
+          {
+            "node": "Create Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Python: Complete Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Session": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse output": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "notIFJ5SwQbSVMLu",
+    "timeSavedPerExecution": 60
+  },
+  "versionId": "974ea689-4bec-4853-815d-922687b41f94",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b7c415b1c0c5aaf9c7c4fc129584d21787be6487092ab263cc1452b129fd0e1"
+  },
+  "id": "2fngvFSvBIC1UDNh",
+  "tags": []
+}
