@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aceros Ibéricos × Sapira AI — 8-Week Pilot Kickoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg:        #F5F5F3;
+    --paper:     #FFFFFF;
+    --grid-line: rgba(0,0,0,0.045);
+    --text:      #1a1a1a;
+    --muted:     #666666;
+    --dim:       #9A9A95;
+    --rule:      #DCDAD3;
+    --accent:    #1a1a1a;
+    --warn:      #B75000;
+    --ok:        #008138;
+    --hitl:      #953D00;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:        #0a0a0b;
+    --paper:     #141414;
+    --grid-line: rgba(255,255,255,0.05);
+    --text:      #ECECEC;
+    --muted:     #a3a3a3;
+    --dim:       #52525c;
+    --rule:      #27272a;
+    --accent:    #ECECEC;
+    --warn:      #FEBC2E;
+    --ok:        #28C840;
+    --hitl:      #FEBC2E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ============================================================
+     Header bar (slim)
+     ============================================================ */
+  header.top {
+    flex: 0 0 auto;
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+    z-index: 50;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .brand .mark {
+    width: 18px; height: 18px;
+    border: 1.4px solid var(--text); border-radius: 50%;
+    position: relative;
+  }
+  .brand .mark::after {
+    content: ''; position: absolute;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    top: 4.5px; left: 4.5px;
+  }
+  .brand b { color: var(--text); font-weight: 500; letter-spacing: 0.2em; }
+  .brand sep { opacity: 0.4; }
+
+  .top-right { display: flex; align-items: center; gap: 6px; }
+  .pill {
+    appearance: none;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .pill:hover { border-color: var(--text); }
+  .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* ============================================================
+     Stage — locks every slide to 16:9
+     ============================================================ */
+  main.deck {
+    flex: 1 1 auto;
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px;
+    position: relative;
+    min-height: 0;
+  }
+
+  .stage {
+    position: relative;
+    width: min(100%, calc((100vh - 56px - 56px - 56px) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 30px rgba(0,0,0,0.06);
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  /* faint engineering-paper grid inside the slide */
+  .stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 4cqi 4cqi;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    padding: 6cqi 6cqi 5cqi;
+    z-index: 1;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .slide[aria-current="true"] {
+    opacity: 1; pointer-events: auto;
+    animation: fadeUp 0.35s ease forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(0.8cqi); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============================================================
+     Typography — all sized in cqi so it scales with slide
+     ============================================================ */
+  .tag {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1.05cqi; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex; align-items: center; gap: 1cqi;
+    margin-bottom: 2.4cqi;
+  }
+  .tag::before {
+    content: ''; width: 0.6cqi; height: 0.6cqi; border-radius: 50%;
+    background: currentColor;
+  }
+  .tag .num { color: var(--dim); }
+
+  .title {
+    font-family: 'Geist', system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+    color: var(--text);
+    font-size: 6.6cqi;
+  }
+  .title.huge { font-size: 7.6cqi; }
+  .title em {
+    font-style: italic;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 400;
+  }
+  .title b { font-weight: 500; color: var(--accent); }
+
+  .lede {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.7cqi;
+    line-height: 1.45;
+    color: var(--muted);
+    max-width: 50ch;
+    margin-top: 2cqi;
+  }
+
+  .kicker {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ============================================================
+     SLIDE 1 — Title
+     ============================================================ */
+  #s-title { justify-content: space-between; }
+  #s-title .meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5cqi;
+    border-top: 1px solid var(--rule);
+    padding-top: 2cqi;
+    margin-top: auto;
+  }
+  .meta-cell .k {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--dim);
+  }
+  .meta-cell .v {
+    font-size: 1.4cqi; font-weight: 500; color: var(--text);
+    margin-top: 0.6cqi;
+  }
+
+  /* ============================================================
+     SLIDE 2 — The bet (3 KPIs)
+     ============================================================ */
+  .kpi-grid {
+    margin-top: 4cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--text);
+    border-bottom: 1px solid var(--text);
+    align-items: stretch;
+  }
+  .kpi {
+    padding: 3cqi 2.4cqi;
+    border-right: 1px solid var(--rule);
+    display: flex; flex-direction: column; justify-content: space-between;
+    overflow: hidden;
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi .label {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1cqi; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .kpi .num {
+    font-family: 'Geist', sans-serif;
+    font-weight: 300;
+    font-size: 8.4cqi;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 1.6cqi 0;
+    color: var(--text);
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: 0.3cqi;
+  }
+  .kpi .num .unit {
+    font-size: 0.28em;
+    color: var(--muted);
+    font-weight: 400;
+    letter-spacing: 0;
+    transform: translateY(-0.15em);
+    display: inline-block;
+  }
+  .kpi .desc {
+    font-size: 1.2cqi; line-height: 1.45;
+    color: var(--muted);
+    max-width: 26ch;
+  }
+  .kpi.accent .num { color: var(--accent); }
+
+  /* ============================================================
+     Process flow (As-Is / To-Be)
+     ============================================================ */
+  .flow {
+    margin-top: 3cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 0.6cqi;
+    align-content: stretch;
+    align-items: stretch;
+  }
+  .flow.flow-4 { grid-template-columns: repeat(4, 1fr); }
+  .flow .step {
+    padding: 2cqi 1.6cqi;
+    background: color-mix(in srgb, var(--bg) 50%, var(--paper));
+    border: 1px solid var(--rule);
+    display: flex; flex-direction: column;
+    position: relative;
+    min-height: 0;
+  }
+  .flow .step .n {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.16em;
+    color: var(--dim);
+    margin-bottom: 1cqi;
+  }
+  .flow .step .name {
+    font-size: 1.5cqi; font-weight: 500; color: var(--text);
+    line-height: 1.25;
+  }
+  .flow .step .body {
+    margin-top: 0.8cqi;
+    font-size: 1.05cqi; line-height: 1.45; color: var(--muted);
+  }
+  .flow .step .pill-status {
+    margin-top: auto;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.85cqi; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0.3cqi 0.9cqi; border: 1px solid currentColor;
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+  .flow .step.cap {
+    background: transparent;
+    border-style: dashed;
+    align-items: center; justify-content: center;
+    color: var(--dim);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1cqi; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .pill-manual { color: var(--warn); }
+  .pill-auto   { color: var(--ok); }
+  .pill-hitl   { color: var(--hitl); }
+  .pill-loop   { color: var(--accent); }
+
+  .friction-strip {
+    margin-top: 1.4cqi;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6cqi;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1cqi; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--warn);
+  }
+  .friction-strip.strip-4 { grid-template-columns: repeat(4, 1fr); }
+  .friction-strip span {
+    display: inline-flex; gap: 0.6cqi; align-items: center;
+    padding: 0 1.6cqi;
+    line-height: 1.3;
+  }
+  .friction-strip span.empty { visibility: hidden; }
+  .friction-strip span::before {
+    content: '!'; width: 1.5cqi; height: 1.5cqi;
+    border: 1px solid currentColor; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 0.9cqi;
+    flex-shrink: 0;
+  }
+  .friction-strip span:not(.empty)::before { content: '!'; }
+
+  /* triptych under To-Be */
+  .triptych {
+    margin-top: 2cqi;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2cqi;
+  }
+  .col {
+    border: 1px solid var(--rule);
+    padding: 1.6cqi 1.6cqi;
+    background: var(--paper);
+  }
+  .col h3 {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 1cqi;
+  }
+  .col.auto  h3 { color: var(--ok); }
+  .col.hitl  h3 { color: var(--hitl); }
+  .col.scope h3 { color: var(--muted); }
+  .col ul { list-style: none; display: flex; flex-direction: column; gap: 0.7cqi; }
+  .col li {
+    font-size: 1.1cqi; line-height: 1.4; color: var(--text);
+    padding-left: 1.2cqi; position: relative;
+  }
+  .col li::before {
+    content: ''; position: absolute; left: 0; top: 0.7cqi;
+    width: 0.7cqi; height: 1px; background: currentColor; opacity: 0.5;
+  }
+  .col.scope li { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--dim); }
+
+  /* ============================================================
+     SLIDE 5 — Data
+     ============================================================ */
+  .arch {
+    margin-top: 3cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5cqi;
+  }
+  .codeblock {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 1.8cqi 2cqi;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1.05cqi;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre;
+    overflow: hidden;
+  }
+  .codeblock .k { color: var(--accent); }
+  .codeblock .s { color: var(--ok); }
+  .codeblock .c { color: var(--dim); font-style: italic; }
+
+  .recon-flow {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 1.8cqi 2cqi;
+    display: flex; flex-direction: column;
+    justify-content: center;
+  }
+  .recon-flow h4 {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5cqi;
+  }
+  .recon-step {
+    display: grid;
+    grid-template-columns: 3cqi 1fr;
+    gap: 1.4cqi;
+    padding: 1cqi 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .recon-step:last-child { border-bottom: none; }
+  .recon-step .badge {
+    width: 2.6cqi; height: 2.6cqi;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1.1cqi; color: var(--accent);
+  }
+  .recon-step .head {
+    font-size: 1.3cqi; font-weight: 500; color: var(--text);
+  }
+  .recon-step .sub {
+    font-size: 1.05cqi; color: var(--muted); line-height: 1.4;
+    margin-top: 0.2cqi;
+  }
+  .recon-step.gate { background: color-mix(in srgb, var(--hitl) 6%, transparent); margin: 0 -2cqi; padding: 1cqi 2cqi; }
+  .recon-step.gate .badge { color: var(--hitl); border-color: var(--hitl); }
+  .recon-step.gate b { color: var(--hitl); font-weight: 500; }
+
+  /* ============================================================
+     SLIDE 6 — IT readiness checklist
+     ============================================================ */
+  .checklist {
+    margin-top: 3cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 1.2cqi;
+  }
+  .check {
+    padding: 1.8cqi 2cqi;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    display: grid; grid-template-columns: 2.4cqi 1fr; gap: 1.4cqi;
+    align-items: start;
+  }
+  .check .box {
+    width: 2.2cqi; height: 2.2cqi;
+    border: 1.5px solid var(--accent);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    font-size: 1.4cqi; line-height: 1;
+    margin-top: 0.2cqi;
+  }
+  .check.note {
+    border-left-color: var(--muted);
+    background: color-mix(in srgb, var(--bg) 60%, var(--paper));
+  }
+  .check.note .box {
+    border-color: var(--muted);
+    color: var(--muted);
+    border-radius: 50%;
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+  .check.note .who { color: var(--muted); }
+  .check h5 {
+    font-size: 1.3cqi; font-weight: 500; color: var(--text);
+    line-height: 1.3;
+  }
+  .check .sub {
+    font-size: 1cqi; line-height: 1.45; color: var(--muted);
+    margin-top: 0.4cqi;
+  }
+  .check .who {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.9cqi; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 0.6cqi;
+  }
+
+  /* ============================================================
+     SLIDE 7 — Three proportional phase blocks (2 / 2 / 4 weeks)
+     ============================================================ */
+  .ribbon {
+    margin-top: 4cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 2fr 4fr;
+    gap: 1cqi;
+  }
+  .phase-block {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 2.4cqi 2.2cqi 9.5cqi;     /* reserve space at the bottom for the gate */
+    display: flex; flex-direction: column;
+    position: relative;
+    border-top: 3px solid currentColor;
+    color: var(--muted);
+  }
+  /* dashed rule pinned to a fixed Y in every block — guarantees alignment */
+  .phase-block::after {
+    content: '';
+    position: absolute;
+    left: 2.2cqi; right: 2.2cqi;
+    bottom: 7.5cqi;
+    border-top: 1px dashed var(--rule);
+    pointer-events: none;
+  }
+  .phase-head { display: flex; flex-direction: column; }
+  .phase-block.build { color: var(--text); }
+  .phase-block.pilot { color: var(--ok); }
+
+  .phase-weeks {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1.1cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: currentColor;
+  }
+  .phase-name {
+    font-family: 'Geist', sans-serif;
+    font-weight: 300;
+    font-size: 3.2cqi;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-top: 0.4cqi;
+    line-height: 1;
+  }
+  .phase-arc {
+    margin-top: 0.6cqi;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .phase-out {
+    margin-top: 1.6cqi;
+    font-size: 1.4cqi; line-height: 1.45;
+    color: var(--text);
+  }
+  .phase-gate {
+    position: absolute;
+    left: 2.2cqi; right: 2.2cqi; bottom: 2.2cqi;
+    top: auto;
+    display: flex; flex-direction: column; gap: 0.3cqi;
+  }
+  .phase-gate .mark {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: currentColor;
+  }
+  .phase-gate .crit {
+    font-size: 1.15cqi; line-height: 1.4;
+    color: var(--text);
+  }
+  .phase-gate .crit b { color: currentColor; font-weight: 500; }
+
+  /* ============================================================
+     SLIDE 8 — Governance + metrics
+     ============================================================ */
+  .gov {
+    margin-top: 3cqi;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2.5cqi;
+  }
+  .gov h3 {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.4cqi;
+  }
+  .cadence {
+    display: flex; flex-direction: column; gap: 0.8cqi;
+  }
+  .cadence li {
+    list-style: none;
+    padding: 1.2cqi 1.5cqi;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    display: grid; grid-template-columns: 8cqi 1fr; gap: 1.2cqi; align-items: baseline;
+  }
+  .cadence li .when {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.95cqi; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .cadence li .what { font-size: 1.15cqi; color: var(--text); line-height: 1.4; }
+  .cadence li .what b { color: var(--text); font-weight: 500; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .metric {
+    padding: 1.8cqi 2cqi;
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .metric:nth-child(2n) { border-right: none; }
+  .metric:nth-last-child(-n+2) { border-bottom: none; }
+  .metric .lbl {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.9cqi; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .metric .v {
+    font-family: 'Geist', sans-serif;
+    font-weight: 300; font-size: 3.6cqi;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-top: 0.6cqi;
+    line-height: 1;
+  }
+  .metric .v .from {
+    display: block;
+    margin-top: 0.7cqi;
+    font-size: 0.95cqi;
+    color: var(--dim);
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .metric.accent .v { color: var(--accent); }
+
+  /* ============================================================
+     Closing slide
+     ============================================================ */
+  #s-close { justify-content: center; }
+  #s-close .closing {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic;
+    font-size: 4.4cqi;
+    line-height: 1.2;
+    color: var(--text);
+    max-width: 22ch;
+    font-weight: 400;
+  }
+  #s-close .closing b { color: var(--accent); font-style: normal; font-weight: 500; }
+  #s-close .signoff {
+    margin-top: 4cqi;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 1.1cqi; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  #s-close .signoff b { color: var(--text); font-weight: 500; }
+
+  /* ============================================================
+     Deck nav
+     ============================================================ */
+  .deck-nav {
+    flex: 0 0 auto;
+    padding: 12px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    border-top: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .deck-nav button.arrow {
+    appearance: none; background: transparent; border: 1px solid var(--rule);
+    width: 32px; height: 32px; border-radius: 999px;
+    color: var(--text); cursor: pointer;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .deck-nav button.arrow:hover:not(:disabled) { border-color: var(--text); }
+  .deck-nav button.arrow:disabled { opacity: 0.25; cursor: not-allowed; }
+  .deck-nav .dots { display: flex; gap: 7px; align-items: center; padding: 0 6px; }
+  .deck-nav .dot {
+    width: 7px; height: 7px; padding: 0;
+    border: none; border-radius: 50%;
+    background: var(--rule);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .deck-nav .dot:hover { background: var(--muted); }
+  .deck-nav .dot[aria-current="true"] {
+    background: var(--accent);
+    transform: scale(1.5);
+  }
+  .deck-nav .counter {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.12em;
+    min-width: 38px; text-align: center;
+  }
+
+  /* ============================================================
+     Print — letterboxed slides on landscape A4-ish pages
+     ============================================================ */
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { background: #fff; overflow: visible; }
+    header.top, .deck-nav { display: none !important; }
+    main.deck { padding: 0; display: block; }
+    .stage {
+      width: 1280px !important;
+      height: 720px !important;
+      max-width: none;
+      box-shadow: none;
+      border: none;
+      page-break-after: always;
+      display: block;
+    }
+    .slide {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      animation: none !important;
+      position: relative !important;
+      inset: auto !important;
+    }
+    /* in print, inline each slide as its own page */
+    .stage:last-of-type { page-break-after: auto; }
+  }
+
+  /* fallback for narrow viewports */
+  @media (max-width: 760px) {
+    .stage {
+      width: 95vw;
+      aspect-ratio: 16 / 9;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="mark" aria-hidden="true"></div>
+    <b>SAPIRA AI</b>
+    <sep>×</sep>
+    <span>Aceros Ibéricos</span>
+  </div>
+  <div class="top-right">
+    <button class="pill" id="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">Dark</button>
+    <button class="pill" id="print-btn" type="button" aria-label="Print to PDF">PDF</button>
+  </div>
+</header>
+
+<main class="deck">
+  <div class="stage">
+
+    <!-- ============ SLIDE 1 — Title ============ -->
+    <section class="slide" data-slide="title" id="s-title" aria-current="true">
+      <div class="tag"><span class="num">01 / 08</span> Pilot kickoff · Confidential</div>
+      <h1 class="title huge">Multi-agent BOM<br>procurement <em>automation.</em></h1>
+      <p class="lede" style="margin-top:2.4cqi; max-width:54ch;">An 8-week pilot to automate the ingestion, extraction and reconciliation of engineering BOMs into the SAP Material Master — without compromising data integrity.</p>
+      <div class="meta">
+        <div class="meta-cell"><div class="k">Prepared for</div><div class="v">Aceros Ibéricos S.A.</div></div>
+        <div class="meta-cell"><div class="k">Prepared by</div><div class="v">Albert Folch · Client Founder, Sapira AI</div></div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 2 — The bet ============ -->
+    <section class="slide" data-slide="bet">
+      <div class="tag"><span class="num">02 / 08</span> Why we are here</div>
+      <h2 class="title">Three numbers <em>define</em> the pilot.</h2>
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="label">Cycle time today</div>
+          <div class="num">24–48<span class="unit">h</span></div>
+          <div class="desc">Time-zone gap, HQ → Asia. Dead time.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Manual workforce</div>
+          <div class="num">15<span class="unit">FTE</span></div>
+          <div class="desc">Triaging an inbox, copy-pasting into SAP.</div>
+        </div>
+        <div class="kpi accent">
+          <div class="label">Cost of one error</div>
+          <div class="num">€350<span class="unit">K</span></div>
+          <div class="desc">500 t of unusable steel + line delays.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 3 — As-Is ============ -->
+    <section class="slide" data-slide="asis">
+      <div class="tag" style="color: var(--warn);"><span class="num">03 / 08</span> As-Is — the manual chain</div>
+      <h2 class="title">Four handoffs. <em>Zero</em> guardrails.</h2>
+      <div class="flow flow-4">
+        <div class="step">
+          <div class="n">01</div>
+          <div class="name">Monitor &amp; triage<br>new / revision / dup</div>
+          <div class="pill-status pill-manual">Manual</div>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <div class="name">Extract specs<br>from PDF / Excel / body</div>
+          <div class="pill-status pill-manual">Manual</div>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <div class="name">Reconcile to SAP code<br><span style="font-family:Geist Mono,monospace;font-size:0.95cqi;color:var(--muted)">"Galv Steel B" → AC-GALV-TB-001</span></div>
+          <div class="pill-status pill-manual">Tribal</div>
+        </div>
+        <div class="step">
+          <div class="n">04</div>
+          <div class="name">Key PO into SAP</div>
+          <div class="pill-status pill-manual">Manual</div>
+        </div>
+      </div>
+      <div class="friction-strip strip-4">
+        <span>24–48h delay</span>
+        <span>3 formats, 0 schema</span>
+        <span>SAP rejects literal text</span>
+        <span>€350K per misread</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 4 — To-Be ============ -->
+    <section class="slide" data-slide="tobe">
+      <div class="tag" style="color: var(--ok);"><span class="num">04 / 08</span> To-Be — the PHARO pipeline</div>
+      <h2 class="title">Four agents. <em>One</em> human gate.</h2>
+      <div class="flow">
+        <div class="step">
+          <div class="n">A1</div>
+          <div class="name">Extractor</div>
+          <div class="body">Typed BOM lines from PDF / Excel / body.</div>
+          <div class="pill-status pill-auto">Auto</div>
+        </div>
+        <div class="step">
+          <div class="n">A2</div>
+          <div class="name">Validator loop</div>
+          <div class="body">Self-critique up to 3×.</div>
+          <div class="pill-status pill-loop">Loop</div>
+        </div>
+        <div class="step">
+          <div class="n">A3</div>
+          <div class="name">Reconciler</div>
+          <div class="body">Match to SAP MM with confidence.</div>
+          <div class="pill-status pill-auto">Auto</div>
+        </div>
+        <div class="step">
+          <div class="n">G</div>
+          <div class="name">HITL gate</div>
+          <div class="body">Block PO if any line uncertain.</div>
+          <div class="pill-status pill-hitl">Human</div>
+        </div>
+        <div class="step">
+          <div class="n">A4</div>
+          <div class="name">PO drafter</div>
+          <div class="body">DRAFT only into SAP sandbox.</div>
+          <div class="pill-status pill-auto">Auto</div>
+        </div>
+      </div>
+      <div class="triptych">
+        <div class="col auto">
+          <h3>● Automated</h3>
+          <ul>
+            <li>Inbox monitoring &amp; dedup</li>
+            <li>BOM extraction across formats</li>
+            <li>Reconciliation to SAP MM</li>
+          </ul>
+        </div>
+        <div class="col hitl">
+          <h3>● Human-in-the-loop</h3>
+          <ul>
+            <li>Low-confidence reconciliations</li>
+            <li>Margin notes that change spec</li>
+            <li>One-click PO confirmation</li>
+          </ul>
+        </div>
+        <div class="col scope">
+          <h3>○ Out of scope · pilot</h3>
+          <ul>
+            <li>Live SAP commit</li>
+            <li>CAD-drawing OCR</li>
+            <li>Non-steel commodities</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 5 — Data architecture ============ -->
+    <section class="slide" data-slide="data">
+      <div class="tag"><span class="num">05 / 08</span> Data &amp; reconciliation</div>
+      <h2 class="title">Typed BOM in. <em>Confident</em> SAP code out.</h2>
+      <div class="arch">
+<pre class="codeblock"><span class="c"># Per BOM line · Pydantic</span>
+<span class="k">class</span> LineItem:
+  line_ref         : str
+  raw_description  : str
+  grade            : str
+  form             : Form | None     <span class="c"># sheet|plate|coil|tube…</span>
+  thickness_mm     : float | None
+  quantity         : float
+  uom              : UoM | None      <span class="c"># TON|KG|M</span>
+  notes            : str             <span class="c"># margin notes</span>
+
+<span class="c"># Extraction wraps lines with email_type</span>
+<span class="c"># (NEW|REVISION|DUP), project, bom_revision.</span>
+<span class="c"># ReconciledLine adds sap_code, confidence,</span>
+<span class="c"># status (auto|hitl), hitl_reason.</span></pre>
+        <div class="recon-flow">
+          <h4>Friction #2 — text → SAP code</h4>
+          <div class="recon-step">
+            <div class="badge">1</div>
+            <div><div class="head">Lookup tool · exact match</div><div class="sub">Reconciler agent normalizes grade and queries the Material Master tool.</div></div>
+          </div>
+          <div class="recon-step">
+            <div class="badge">2</div>
+            <div><div class="head">Reconciler agent reasons</div><div class="sub">Reads candidate codes, applies steel-domain rules (grade family, thickness, tolerance), scores its own confidence.</div></div>
+          </div>
+          <div class="recon-step gate">
+            <div class="badge">!</div>
+            <div><div class="head">Below threshold → HITL</div><div class="sub"><b>PO blocked</b> until queue empty. By design.</div></div>
+          </div>
+          <div class="recon-step">
+            <div class="badge">✓</div>
+            <div><div class="head">DRAFT PO into SAP sandbox</div><div class="sub">Buyer one-click confirms.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 6 — Week-1 readiness ============ -->
+    <section class="slide" data-slide="readiness">
+      <div class="tag"><span class="num">06 / 08</span> Week-1 IT readiness</div>
+      <h2 class="title">What we need <em>by</em> Friday W1.</h2>
+      <div class="checklist">
+        <div class="check">
+          <div class="box">✓</div>
+          <div>
+            <h5>Read access · shared procurement inbox</h5>
+            <div class="sub">A read-only mailbox account so the agent can ingest emails and attachments without sending.</div>
+            <div class="who">IT Director</div>
+          </div>
+        </div>
+        <div class="check">
+          <div class="box">✓</div>
+          <div>
+            <h5>Read-only API to SAP Material Master</h5>
+            <div class="sub">OData or RFC endpoint so the agent can look up valid steel codes live. Read-only — no writes to production.</div>
+            <div class="who">SAP basis team</div>
+          </div>
+        </div>
+        <div class="check">
+          <div class="box">✓</div>
+          <div>
+            <h5>SAP sandbox + DRAFT-PO service user</h5>
+            <div class="sub">A non-production SAP client where the agent can create draft POs for human review.</div>
+            <div class="who">SAP basis team</div>
+          </div>
+        </div>
+        <div class="check note">
+          <div class="box note-box">i</div>
+          <div>
+            <h5>No parallel auth system</h5>
+            <div class="sub">Approvals happen inside SAP — its existing audit trail signs every DRAFT → PO confirmation. We don't introduce a second login.</div>
+            <div class="who">By design</div>
+          </div>
+        </div>
+        <div class="check">
+          <div class="box">✓</div>
+          <div>
+            <h5>Two named experts · 4h / week each</h5>
+            <div class="sub">One procurement analyst + one engineering or quality lead.</div>
+            <div class="who">CPO</div>
+          </div>
+        </div>
+        <div class="check">
+          <div class="box">✓</div>
+          <div>
+            <h5>Labelled corpus · past 60 days of email → PO pairs</h5>
+            <div class="sub">Past emails joined to the SAP POs they produced. This is our benchmark for measuring agent accuracy.</div>
+            <div class="who">SAP basis + IT Director</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 7 — 8-week timeline ============ -->
+    <section class="slide" data-slide="timeline">
+      <div class="tag"><span class="num">07 / 08</span> The 8-week playbook</div>
+      <h2 class="title">Eight weeks. <em>Three</em> phases.</h2>
+
+      <div class="ribbon">
+        <div class="phase-block discovery">
+          <div class="phase-head">
+            <div class="phase-weeks">W1 — W2 · 2 weeks</div>
+            <div class="phase-name">Discovery</div>
+            <div class="phase-out">Extractor proven on the labelled corpus.</div>
+          </div>
+          <div class="phase-gate">
+            <div class="mark">✦ Gate 1</div>
+            <div class="crit"><b>Extraction accuracy ≥ 95%</b></div>
+          </div>
+        </div>
+
+        <div class="phase-block build">
+          <div class="phase-head">
+            <div class="phase-weeks">W3 — W4 · 2 weeks</div>
+            <div class="phase-name">Build</div>
+            <div class="phase-out">End-to-end pipeline writing DRAFT POs into the SAP sandbox.</div>
+          </div>
+          <div class="phase-gate">
+            <div class="mark">✦ Gate 2</div>
+            <div class="crit"><b>≥ 90% auto-drafted correctly</b></div>
+          </div>
+        </div>
+
+        <div class="phase-block pilot">
+          <div class="phase-head">
+            <div class="phase-weeks">W5 — W8 · 4 weeks</div>
+            <div class="phase-name">Pilot</div>
+            <div class="phase-out">Agent live on real emails. Performance measured daily.</div>
+          </div>
+          <div class="phase-gate">
+            <div class="mark">▣ Go-Live</div>
+            <div class="crit"><b>≥ 90% auto-approved · &lt; 30 min cycle time</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 8 — Governance + metrics ============ -->
+    <section class="slide" data-slide="governance">
+      <div class="tag"><span class="num">08 / 08</span> Project communication</div>
+      <h2 class="title">Project plan.</h2>
+      <div class="gov">
+        <div>
+          <h3>Communication</h3>
+          <ul class="cadence">
+            <li><span class="when">Daily</span><span class="what"><b>15-min check-in</b> with the procurement lead — review the human review queue and any blockers.</span></li>
+            <li><span class="when">Weekly</span><span class="what"><b>Sponsor review</b> with the CPO + IT Director — progress, risks, scope changes.</span></li>
+            <li><span class="when">Bi-weekly</span><span class="what"><b>SAP integration review</b> with the IT team — confirm the agent and SAP are still talking cleanly.</span></li>
+            <li><span class="when">On incident</span><span class="what"><b>Critical alert</b> within 60 min · the agent can be paused in under 5 min.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Success metrics</h3>
+          <div class="metrics">
+            <div class="metric">
+              <div class="lbl">Time · email → draft PO</div>
+              <div class="v">&lt; 30m<span class="from">today: 24–48h</span></div>
+            </div>
+            <div class="metric accent">
+              <div class="lbl">POs auto-approved by W8</div>
+              <div class="v">≥ 90%<span class="from">no human review</span></div>
+            </div>
+            <div class="metric">
+              <div class="lbl">Wrong SAP codes shipped</div>
+              <div class="v">0<span class="from">zero tolerance</span></div>
+            </div>
+            <div class="metric">
+              <div class="lbl">Procurement hours freed</div>
+              <div class="v">~60%<span class="from">of 15 FTE</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<nav class="deck-nav" aria-label="Slide navigation">
+  <button class="arrow prev" type="button" aria-label="Previous slide">‹</button>
+  <div class="dots" role="tablist"></div>
+  <button class="arrow next" type="button" aria-label="Next slide">›</button>
+  <span class="counter">1 / 9</span>
+</nav>
+
+<script>
+(function () {
+  'use strict';
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const keys = slides.map(s => s.dataset.slide);
+  const TOTAL = slides.length;
+
+  const dotsRoot = document.querySelector('.deck-nav .dots');
+  keys.forEach((k, i) => {
+    const b = document.createElement('button');
+    b.className = 'dot';
+    b.dataset.target = k;
+    b.setAttribute('aria-label', `Slide ${i + 1}`);
+    if (i === 0) b.setAttribute('aria-current', 'true');
+    b.addEventListener('click', () => goTo(k));
+    dotsRoot.appendChild(b);
+  });
+
+  function currentIdx() {
+    const a = document.querySelector('.slide[aria-current="true"]');
+    return Math.max(0, keys.indexOf(a?.dataset.slide));
+  }
+  function goTo(key) {
+    const idx = keys.indexOf(key);
+    if (idx < 0) return;
+    slides.forEach(s => s.setAttribute('aria-current', s.dataset.slide === key ? 'true' : 'false'));
+    document.querySelectorAll('.deck-nav .dot').forEach(d =>
+      d.setAttribute('aria-current', d.dataset.target === key ? 'true' : 'false')
+    );
+    document.querySelector('.deck-nav .counter').textContent = `${idx + 1} / ${TOTAL}`;
+    document.querySelector('.deck-nav .prev').disabled = idx === 0;
+    document.querySelector('.deck-nav .next').disabled = idx === TOTAL - 1;
+    if (location.hash !== '#' + key) history.replaceState(null, '', '#' + key);
+  }
+
+  document.querySelector('.deck-nav .prev').addEventListener('click', () => {
+    const i = currentIdx(); if (i > 0) goTo(keys[i - 1]);
+  });
+  document.querySelector('.deck-nav .next').addEventListener('click', () => {
+    const i = currentIdx(); if (i < TOTAL - 1) goTo(keys[i + 1]);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+      const i = currentIdx(); if (i < TOTAL - 1) { e.preventDefault(); goTo(keys[i + 1]); }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      const i = currentIdx(); if (i > 0) { e.preventDefault(); goTo(keys[i - 1]); }
+    } else if (e.key === 'Home') { e.preventDefault(); goTo(keys[0]); }
+    else if (e.key === 'End') { e.preventDefault(); goTo(keys[TOTAL - 1]); }
+  });
+  window.addEventListener('hashchange', () => {
+    const k = location.hash.replace('#', ''); if (keys.includes(k)) goTo(k);
+  });
+  const start = location.hash.replace('#', '');
+  if (keys.includes(start)) goTo(start); else goTo(keys[0]);
+
+  // Theme
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    const btn = document.getElementById('theme-toggle');
+    const isDark = t === 'dark';
+    btn.textContent = isDark ? 'Light' : 'Dark';
+    btn.setAttribute('aria-pressed', String(isDark));
+  }
+  applyTheme(localStorage.getItem('deck-theme') || 'light');
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('deck-theme', next);
+    applyTheme(next);
+  });
+
+  // Print: inline all stages
+  document.getElementById('print-btn').addEventListener('click', () => {
+    window.print();
+  });
+})();
+</script>
+</body>
+</html>
