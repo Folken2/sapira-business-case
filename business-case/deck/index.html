@@ -447,6 +447,9 @@
   .recon-step.gate { background: color-mix(in srgb, var(--hitl) 6%, transparent); margin: 0 -2cqi; padding: 1cqi 2cqi; }
   .recon-step.gate .badge { color: var(--hitl); border-color: var(--hitl); }
   .recon-step.gate b { color: var(--hitl); font-weight: 500; }
+  .recon-step.loop { background: color-mix(in srgb, var(--ok) 5%, transparent); margin: 0 -2cqi; padding: 1cqi 2cqi; }
+  .recon-step.loop .badge { color: var(--ok); border-color: var(--ok); }
+  .recon-step.loop .head { color: var(--ok); }
 
   /* ============================================================
      SLIDE 6 — IT readiness checklist
@@ -925,22 +928,22 @@
 <span class="c"># ReconciledLine adds sap_code, confidence,</span>
 <span class="c"># status (auto|hitl), hitl_reason.</span></pre>
         <div class="recon-flow">
-          <h4>Friction #2 — text → SAP code</h4>
+          <h4>Friction #2 — text → SAP code · learns over time</h4>
           <div class="recon-step">
             <div class="badge">1</div>
-            <div><div class="head">Lookup tool · exact match</div><div class="sub">Reconciler agent normalizes grade and queries the Material Master tool.</div></div>
+            <div><div class="head">Ground-truth map · built from history</div><div class="sub">60 days of past email → PO pairs gives us thousands of "Galv Steel B → AC-GALV-TB-001" mappings on day one.</div></div>
           </div>
           <div class="recon-step">
             <div class="badge">2</div>
-            <div><div class="head">Reconciler agent reasons</div><div class="sub">Reads candidate codes, applies steel-domain rules (grade family, thickness, tolerance), scores its own confidence.</div></div>
+            <div><div class="head">Reconciler agent reasons · for new text</div><div class="sub">Reads candidate SAP codes, applies steel-domain rules (grade family, thickness, tolerance), scores its own confidence.</div></div>
           </div>
           <div class="recon-step gate">
             <div class="badge">!</div>
             <div><div class="head">Below threshold → HITL</div><div class="sub"><b>PO blocked</b> until queue empty. By design.</div></div>
           </div>
-          <div class="recon-step">
-            <div class="badge">✓</div>
-            <div><div class="head">DRAFT PO into SAP sandbox</div><div class="sub">Buyer one-click confirms.</div></div>
+          <div class="recon-step loop">
+            <div class="badge">↻</div>
+            <div><div class="head">Every HITL decision feeds the map</div><div class="sub">The agent learns. Same uncertainty doesn't appear twice — accuracy compounds week over week.</div></div>
           </div>
         </div>
       </div>
