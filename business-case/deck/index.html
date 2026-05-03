@@ -597,6 +597,12 @@
     color: var(--muted);
     margin-bottom: 1.4cqi;
   }
+  .gov h3 .tracked { color: var(--dim); }
+  .gov h3 .tracked em {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic; letter-spacing: 0;
+    text-transform: none; color: var(--text);
+  }
   .cadence {
     display: flex; flex-direction: column; gap: 0.8cqi;
   }
@@ -988,8 +994,8 @@
         <div class="check note">
           <div class="box note-box">i</div>
           <div>
-            <h5>No parallel auth system</h5>
-            <div class="sub">Approvals happen inside SAP — its existing audit trail signs every DRAFT → PO confirmation. We don't introduce a second login.</div>
+            <h5>PHARO console for ops; SAP for audit</h5>
+            <div class="sub">Operational telemetry — agent accuracy, queue depth, cost per run — lives in the PHARO console. Approvals and the legal audit trail stay inside SAP. No parallel auth system.</div>
             <div class="who">By design</div>
           </div>
         </div>
@@ -1071,7 +1077,7 @@
           </ul>
         </div>
         <div>
-          <h3>Success metrics</h3>
+          <h3>Success metrics <span class="tracked">· Tracked live in <em>PHARO</em></span></h3>
           <div class="metrics">
             <div class="metric">
               <div class="lbl">Time · email → draft PO</div>
