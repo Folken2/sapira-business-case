@@ -936,10 +936,8 @@
   uom              : UoM | None      <span class="c"># TON|KG|M</span>
   notes            : str             <span class="c"># margin notes</span>
 
-<span class="c"># Extraction wraps lines with email_type</span>
-<span class="c"># (NEW|REVISION|DUP), project, bom_revision.</span>
-<span class="c"># ReconciledLine adds sap_code, confidence,</span>
-<span class="c"># status (auto|hitl), hitl_reason.</span></pre>
+<span class="c"># Reconciled line adds sap_code,</span>
+<span class="c"># confidence, status (auto|hitl).</span></pre>
         <div class="recon-flow">
           <h4>Friction #2 — text → SAP code · learns over time</h4>
           <div class="recon-step">
@@ -995,7 +993,7 @@
           <div class="box note-box">i</div>
           <div>
             <h5>PHARO console for ops; SAP for audit</h5>
-            <div class="sub">Operational telemetry — agent accuracy, queue depth, cost per run — lives in the PHARO console. Approvals and the legal audit trail stay inside SAP. No parallel auth system.</div>
+            <div class="sub">Agent telemetry lives in PHARO. Approvals and the audit trail stay inside SAP — no parallel login.</div>
             <div class="who">By design</div>
           </div>
         </div>
