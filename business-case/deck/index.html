@@ -724,18 +724,22 @@
      Print — letterboxed slides on landscape A4-ish pages
      ============================================================ */
   @media print {
-    @page { size: 1280px 720px; margin: 0; }
+    /* Print at the live deck's natural stage dimensions (981×552 — what the deck
+       actually renders on a 720-tall viewport with header + nav chrome). The
+       cqi-based content was tuned for this size, so it fits exactly as on screen.
+       The resulting PDF is 16:9 — viewers/printers scale it to fit the paper. */
+    @page { size: 981px 552px; margin: 0; }
     html, body { background: #fff; overflow: visible; }
     header.top, .deck-nav { display: none !important; }
     main.deck { padding: 0; display: block; }
     .stage {
-      width: 1280px !important;
-      height: 720px !important;
+      width: 981px !important;
+      height: auto !important;
       max-width: none;
       box-shadow: none;
       border: none;
-      page-break-after: always;
       display: block;
+      aspect-ratio: auto !important;
     }
     .slide {
       opacity: 1 !important;
@@ -743,9 +747,12 @@
       animation: none !important;
       position: relative !important;
       inset: auto !important;
+      width: 981px !important;
+      height: 552px !important;
+      overflow: hidden !important;
+      margin: 0 !important;
     }
-    /* in print, inline each slide as its own page */
-    .stage:last-of-type { page-break-after: auto; }
+    .slide + .slide { page-break-before: always; break-before: page; }
   }
 
   /* fallback for narrow viewports */

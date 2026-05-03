@@ -4,16 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Layout
 
-This repo contains the deliverables for the **Sapira AI × Aceros Ibéricos** Client Founder business case. It is a **multi-project** workspace with three independent top-level pieces:
+This repo contains the deliverables for the **Sapira AI × Aceros Ibéricos** Client Founder business case. It is a **multi-project** workspace with two independent top-level pieces:
 
 - `agent/bom-procurement-agent/` — Python Google ADK multi-agent pipeline that ingests procurement emails, extracts BOMs, reconciles to SAP material codes, and drafts purchase orders. This is the primary technical deliverable.
-- `frontend/` — Next.js 15 demo console (`bom-console`) that visualises the pipeline end-to-end: incoming email → extractor → validator → reconciler → PO creator OR HITL gate. Reads pre-recorded run JSON from `src/data/runs/*.json` (TypeScript types in `src/lib/types.ts` mirror the agent's Pydantic models in `agent/bom-procurement-agent/bom_procurement_agent/models.py`).
 - `business-case/` — assignment artefacts and the pitch deck:
   - `business-case/Client founder _ FDE business case.pdf` — original brief (Spanish/English).
   - `business-case/email.md` — context email; read this first.
   - `business-case/deck/index.html` — self-contained pitch deck (8 slides, 16:9) presented at the pilot kickoff. See [Pitch Deck](#pitch-deck-business-casedeck) below.
-
-The two code projects share data shapes (Pydantic ↔ TypeScript) but are otherwise decoupled: separate dependencies, separate run loops, no shared runtime. The frontend currently reads pre-baked JSON; swapping to a live agent would require replacing the GET handler in `frontend/src/app/api/run/route.ts`.
+  - `business-case/deck/deck.pdf` — printed PDF version of the deck (8 pages, 16:9, generated from `index.html` via `@media print`).
 
 ### Brand identity (don't mix these up)
 
@@ -93,40 +91,6 @@ Cross-cutting plugins are registered globally (see `bom_procurement_agent/plugin
 ### Deployment
 
 Railway-ready: `Dockerfile` + `railway.json`. `railway up` from the agent directory. Health check is `/health` (public, no auth). See the agent's `README.md` for the full env-var reference.
-
-## Frontend (`frontend/` — `bom-console`)
-
-Single-page Next.js 15 / React 19 / Tailwind 4 demo. No auth, no DB, no
-backend — it reads pre-recorded run JSON from `src/data/runs/`. See
-`frontend/README.md` for the file-by-file map.
-
-Commands (from `frontend/`):
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build
-npm run lint
-```
-
-Layout in one breath:
-```
-src/
-├── app/
-│   ├── api/run/route.ts    GET /api/run?email_id=… → one Run JSON
-│   ├── layout.tsx · page.tsx · globals.css · favicons
-├── components/    EmailInbox · EmailPreview · PipelineSteps · ResultPanel
-├── data/runs/     email_001 · email_002 · email_003 (JSONs)
-└── lib/           runs.ts · types.ts · utils.ts
-```
-
-Three sample emails cover the three demo outcomes: clean → DRAFT PO,
-revision-with-margin-note → HITL REVIEW, forwarded copy → DUPLICATE.
-
-To go live: replace the GET handler in `src/app/api/run/route.ts` with one
-that either shells out to the Python agent and reads
-`agent/bom-procurement-agent/output/trace-*.json`, or talks to the ADK
-FastAPI server on `:8000` and converts ADK events into the `Step[]` shape
-defined in `src/lib/types.ts`.
 
 ## Pitch Deck (`business-case/deck/`)
 
