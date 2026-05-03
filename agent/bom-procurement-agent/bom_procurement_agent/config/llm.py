@@ -22,9 +22,12 @@ _OPENROUTER_HEADERS = {
     "HTTP-Referer": os.getenv(
         "OPENROUTER_REFERER",
         "https://github.com/your-org/bom-procurement-agent",
-    ),
-    "X-Title": os.getenv("OPENROUTER_TITLE", "bom-procurement-agent"),
+    ).strip(),
+    "X-Title": os.getenv("OPENROUTER_TITLE", "bom-procurement-agent").strip(),
 }
+
+if (_key := os.getenv("OPENROUTER_API_KEY")) and _key != _key.strip():
+    os.environ["OPENROUTER_API_KEY"] = _key.strip()
 
 FAST_MODEL = LiteLlm(
     model=os.getenv("FAST_MODEL", "openrouter/moonshotai/kimi-k2.5"),
