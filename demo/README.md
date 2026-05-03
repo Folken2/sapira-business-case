@@ -6,7 +6,7 @@ Three runs that exercise the three pipeline outcomes the agent is designed for.
 |-----|------------------|----------------------------------|---------------------|
 | 001 | `email_001.txt`  | `bom_001_harbour9_v1.pdf`        | **DRAFT PO**        |
 | 002 | `email_002.txt`  | `bom_002_coast3_v2.pdf`          | **HITL REVIEW**     |
-| 003 | `email_003.txt`  | `bom_001_harbour9_v1.pdf` (reused) | **DUPLICATE**     |
+| 003 | `email_003.txt`  | *(none — BOM is inline in body)* | **DRAFT PO from prose** |
 
 All BOMs map to materials in the agent's SAP master so the reconciler hits real codes.
 
@@ -20,7 +20,7 @@ demo/
 ├── bom_002_coast3_v2.html / .pdf          ← revision with margin notes (rendered red, hand-written font)
 ├── email_001.txt                          ← email body for run #1
 ├── email_002.txt                          ← email body for run #2
-└── email_003.txt                          ← forwarded version of #1 (no new PDF — reuse 001's)
+└── email_003.txt                          ← unstructured BOM in the email body (no PDF)
 ```
 
 ## Re-rendering the PDFs after edits
@@ -65,25 +65,32 @@ Send `email_002.txt` body with `bom_002_coast3_v2.pdf` attached.
 
 This is the demo's highlight — the system **doesn't blindly automate**.
 
-## Run #3 — Forwarded duplicate (→ DUPLICATE)
+## Run #3 — Unstructured BOM in the email body (→ DRAFT PO from prose)
 
-Send `email_003.txt` body with `bom_001_harbour9_v1.pdf` re-attached (same file, deliberately).
+Send `email_003.txt` body, **no attachment**. The site manager has typed
+the BOM into the email as casual prose — three line items mentioned across
+three paragraphs, mixed with project context and small talk. This is a
+genuine procurement pain: requests come in as text, not structured docs.
 
 **Expected:**
-- `email_type`: `DUPLICATE`
-- `line_items`: empty (per the prompt's DUPLICATE rule)
-- `global_notes`: dedup reason
-- `draft_purchase_order`: **null**, `hitl_queue`: empty
-- Reply email: `[BOM Pipeline] Email classified as duplicate / non-BOM`
+- `email_type`: `NEW_BOM` · `project`: `FERRY-2` · `bom_revision`: `v1` (or empty if not stated)
+- 3 line items extracted from prose:
+  - 60 TON · S355J2 plate 8 mm   → `AC-HR-S355-080`
+  - 25 TON · B500S rebar 12 mm   → `AC-REBAR-B500-12`
+  - 150 M  · S235JR tube OD 25 mm wall 2 mm → `AC-TUBE-S235-25`
+- All three reconcile cleanly to SAP master
+- `hitl_queue`: empty
+- `draft_purchase_order`: created
+- Reply email: `[BOM Pipeline] Draft PO ready: DRAFT-...`
 
-This proves the system **won't double-order**.
+This is the demo's "show off" moment — even with **no PDF, no table, no structure**, the agent reads the prose and produces a valid PO. Critical because in real life maybe 30–40% of procurement requests arrive this way.
 
 ## Demo running order (5–6 min total)
 
 1. **Set the stage (30s):** "Aceros Ibéricos gets messy procurement emails. Three real ones."
 2. **Run #1 — DRAFT PO (90s):** Send Email 001. Watch n8n → agent → reply with the DRAFT PO. *"Clean email, clean output, zero human time."*
 3. **Run #2 — HITL (120s):** Send Email 002. Show the agent **stops before PO creation** and asks for review. *"This is the part that wins trust — the agent knows what it doesn't know."*
-4. **Run #3 — DUPLICATE (60s):** Send Email 003. Show the forward is recognised. *"The boring failure mode that costs companies real money — solved."*
+4. **Run #3 — Prose → DRAFT (90s):** Send Email 003 (no attachment). Show that the agent reads the BOM out of casual prose and still produces a valid PO. *"This is what 30–40% of procurement actually looks like — Slack-tier requests, not structured docs."*
 5. **Wrap (30s):** "Same prompt chain, three different judgments, all correct."
 
 ## Pre-demo dress rehearsal

@@ -1,32 +1,36 @@
 TO:      procurement-asia@acerosibericos.com
-SUBJECT: Fwd: [BOM] Project HARBOUR-9 — initial spec v1
-ATTACH:  bom_001_harbour9_v1.pdf   (same PDF as email 001 — that's the point)
+SUBJECT: pedido rápido FERRY-2 — sin BOM formal todavía
+ATTACH:  (none — todo va en el cuerpo)
 
 ────────────────────────────────────────────────────────────
 
-Reenvío por si no llegó la primera vez. Han, ¿lo recibiste?
-Necesito confirmación esta semana.
+Hola Han,
 
-— María
+Te escribo rápido sin pasar por el flujo formal porque vamos justos
+de tiempo con FERRY-2 (la terminal de ferries que comentamos el
+otro día en la call). Engineering aún está cerrando el BOM oficial
+pero necesito que vayas pidiendo lo siguiente para no bloquear obra:
 
-──────── Forwarded message ────────
-De: María Soto <maria.soto@acerosibericos.es>
-Fecha: lun, 4 may 2026 a las 09:14
-Asunto: [BOM] Project HARBOUR-9 — initial spec v1
-Para: <procurement-asia@acerosibericos.com>
+Necesito unas 60 toneladas de chapa S355J2 de 8mm para el casco
+principal — la misma referencia que usamos en HARBOUR-7 el año
+pasado, así que ya sabes el código.
 
-Hola team,
+También 25 ton de corrugado B500S del 12 para los refuerzos del
+muelle de embarque. Mira si Joaquín te puede confirmar si vamos
+con 12 o 16 antes de cerrar pero por defecto pide 12.
 
-Os adjunto el BOM inicial v1 para el proyecto HARBOUR-9 (Bay 4,
-ampliación del puerto de Bilbao). Por favor proceded con sourcing
-cuanto antes — estamos en camino crítico y la fecha de arranque
-de obra es el 15 de junio.
+Ah, y no olvides los tubos: necesitamos 150 metros de tubo S235JR
+redondo OD 25mm pared 2mm para los pasamanos y barandillas de la
+zona de embarque de pasajeros.
 
-Toda la línea está estandarizada (S355J2, B500S, ER70S-6) y los
-volúmenes son los habituales para este tipo de muelle. No debería
-haber sorpresas.
+El BOM oficial v1 te lo paso en cuanto María lo firme, probablemente
+el viernes. Pero estos tres ítems los necesitamos sí o sí, así que
+podemos ir avanzando con esto.
 
-Cualquier cosa, me decís.
+Cualquier duda me pegas un toque.
 
-Gracias,
-María Soto
+Gracias crack,
+Albert Folch
+Site Manager — Aceros Ibéricos
+albert.folch@acerosibericos.es
++34 6XX XXX XXX
