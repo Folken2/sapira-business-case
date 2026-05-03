@@ -33,8 +33,6 @@ class MemoryPlugin(BasePlugin):
 
     async def before_agent_callback(
         self,
-        *,
-        invocation_context,
         **kwargs,
     ) -> Optional[dict]:
         """Log memory stats at the start of each agent invocation."""
