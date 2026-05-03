@@ -9,7 +9,6 @@ This repo contains the deliverables for the **Sapira AI × Aceros Ibéricos** Cl
 - `agent/bom-procurement-agent/` — Python Google ADK multi-agent pipeline that ingests procurement emails, extracts BOMs, reconciles to SAP material codes, and drafts purchase orders. This is the primary technical deliverable.
 - `business-case/` — assignment artefacts and the pitch deck:
   - `business-case/Client founder _ FDE business case.pdf` — original brief (Spanish/English).
-  - `business-case/email.md` — context email; read this first.
   - `business-case/deck/index.html` — self-contained pitch deck (8 slides, 16:9) presented at the pilot kickoff. See [Pitch Deck](#pitch-deck-business-casedeck) below.
   - `business-case/deck/deck.pdf` — printed PDF version of the deck (8 pages, 16:9, generated from `index.html` via `@media print`).
 
