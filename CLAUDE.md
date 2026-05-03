@@ -4,13 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Layout
 
-This repo contains the deliverables for the PHARO Sapira / Aceros Ibéricos FDE business case. It is a **multi-project** workspace with three independent top-level pieces:
+This repo contains the deliverables for the **Sapira AI × Aceros Ibéricos** Client Founder business case. It is a **multi-project** workspace with three independent top-level pieces:
 
-- `agent/bom-procurement-agent/` — Python Google ADK multi-agent pipeline that ingests procurement emails, extracts BOMs, reconciles to SAP material codes, and drafts purchase orders. This is the primary deliverable.
+- `agent/bom-procurement-agent/` — Python Google ADK multi-agent pipeline that ingests procurement emails, extracts BOMs, reconciles to SAP material codes, and drafts purchase orders. This is the primary technical deliverable.
 - `frontend/` — Next.js 15 demo console (`bom-console`) that visualises the pipeline end-to-end: incoming email → extractor → validator → reconciler → PO creator OR HITL gate. Reads pre-recorded run JSON from `src/data/runs/*.json` (TypeScript types in `src/lib/types.ts` mirror the agent's Pydantic models in `agent/bom-procurement-agent/bom_procurement_agent/models.py`).
-- `business-case/` — PDF brief and email defining the assignment (Spanish). Read `business-case/email.md` for context on what is being built and why.
+- `business-case/` — assignment artefacts and the pitch deck:
+  - `business-case/Client founder _ FDE business case.pdf` — original brief (Spanish/English).
+  - `business-case/email.md` — context email; read this first.
+  - `business-case/deck/index.html` — self-contained pitch deck (8 slides, 16:9) presented at the pilot kickoff. See [Pitch Deck](#pitch-deck-business-casedeck) below.
 
 The two code projects share data shapes (Pydantic ↔ TypeScript) but are otherwise decoupled: separate dependencies, separate run loops, no shared runtime. The frontend currently reads pre-baked JSON; swapping to a live agent would require replacing the GET handler in `frontend/src/app/api/run/route.ts`.
+
+### Brand identity (don't mix these up)
+
+- **Sapira AI** is the *company* that delivers the engagement (Client Founder = Albert Folch).
+- **PHARO** is the *product* — the multi-agent procurement automation platform Sapira AI sells.
+
+In any client-facing artefact (decks, READMEs, public docs), the engaging party is "Sapira AI" and the technology is "PHARO". Internally the codebase is named after the platform.
 
 ## BOM Procurement Agent (`agent/bom-procurement-agent/`)
 
@@ -34,9 +44,10 @@ DEV_MODE=true adk web .
 .venv/bin/python scripts/run_all_emails.py
 .venv/bin/python scripts/run_all_emails.py email_001 email_002   # subset
 
-# Tests (record/replay — no LLM cost on replay)
+# Tests (record/replay — no LLM cost on replay; recordings under tests/recordings/)
 python -m pytest tests/test_agent.py -v                  # replay
-RECORD=true python -m pytest tests/test_agent.py -v -k test_golden  # re-record
+RECORD=true python -m pytest tests/test_agent.py -v      # re-record (hits LLM)
+python -m pytest tests/test_agent.py -v -k test_golden   # filter to one test
 ```
 
 ### Architecture
@@ -64,7 +75,7 @@ Key behaviors that span multiple files:
 
 ### Plugin chain
 
-10 cross-cutting plugins are registered globally (see `bom_procurement_agent/plugins/` and `scripts/run_all_emails.py` for which subset each entry-point uses): `CostGuardPlugin`, `TracePlugin`, `ConsoleLoggerPlugin`, `ToolEventsPlugin`, `ContextFilterPlugin`, `CachePlugin`, `ResiliencePlugin`, `ReflectAndRetryToolPlugin`, `SaveFilesAsArtifactsPlugin`, `MemoryPlugin`. Pricing for `CostGuardPlugin` is data-driven via `plugins/pricing.json` — add new models there, no code changes.
+Cross-cutting plugins are registered globally (see `bom_procurement_agent/plugins/` and `scripts/run_all_emails.py` for which subset each entry-point uses): `CostGuardPlugin`, `TracePlugin`, `StatePlugin`, `ConsoleLoggerPlugin`, `ToolEventsPlugin`, `ContextFilterPlugin`, `CachePlugin`, `ResiliencePlugin`, `ReflectAndRetryToolPlugin`, `SaveFilesAsArtifactsPlugin`, `MemoryPlugin`. Pricing for `CostGuardPlugin` is data-driven via `plugins/pricing.json` — add new models there, no code changes.
 
 ### Outputs
 
@@ -116,3 +127,49 @@ that either shells out to the Python agent and reads
 `agent/bom-procurement-agent/output/trace-*.json`, or talks to the ADK
 FastAPI server on `:8000` and converts ADK events into the `Step[]` shape
 defined in `src/lib/types.ts`.
+
+## Pitch Deck (`business-case/deck/`)
+
+A self-contained, single-file HTML deck (`index.html`, no build step, no dependencies). Used at the Aceros Ibéricos pilot kickoff (15-min present + 30-min Q&A). Open it directly in a browser — no server needed.
+
+### Design language
+
+Mirrors the **sapira.ai** editorial-minimalist aesthetic:
+
+- **Palette**: bone background (`#F5F5F3`), near-black ink (`#1a1a1a`), monochrome accent. Operational colors only (`--warn` burnt amber for friction, `--ok` green for milestones, `--hitl` ochre for human-in-the-loop). No brand blue.
+- **Type**: light-weight Geist for display, italic *Source Serif 4* for editorial accents (the `<em>` words in titles), Geist Mono for small-caps tags and captions.
+- **Stage**: every slide is locked to **16:9** via `aspect-ratio` on a `.stage` wrapper. Type sizes use `cqi` (container-query inline-size) units so headlines, code, and tables scale with the slide, not the viewport — content can never overflow.
+- **Reference**: `docs/training-agents-venn.html` was used as the structural reference for the slide pager, dot navigation, mono-caps tags, and dark/light toggle. The CSS architecture mirrors it but the visual language is pure Sapira.
+
+### Slide structure (8 slides — within the brief's 6–8 limit)
+
+1. **Title** — Multi-agent BOM procurement automation (Aceros Ibéricos · prepared by Albert Folch, Client Founder, Sapira AI)
+2. **The bet** — three KPIs: 24–48h cycle time · 15 FTE · €350K cost-of-error
+3. **As-Is** — four manual handoffs (combined Monitor & Triage), friction strip 1:1 aligned per step
+4. **To-Be** — PHARO pipeline (extractor → validator loop → reconciler → HITL gate → PO drafter) + automated/HITL/out-of-scope triptych
+5. **Data & reconciliation** — `LineItem` Pydantic schema mirrored from `models.py` + the 4-step Friction #2 flow: ground-truth map (from labelled corpus) → reconciler agent reasons → HITL gate → **self-learning loop** (every HITL decision feeds the map)
+6. **Week-1 IT readiness** — 5 concrete asks + 1 design-decision note ("no parallel auth system" — audit lives in SAP)
+7. **8-week playbook** — three proportional phase blocks (Discovery W1–2 / Build W3–4 / Pilot W5–8) with gates: 95% extraction accuracy → 90% auto-drafted correctly → 90% auto-approved live
+8. **Project communication** — daily/weekly/bi-weekly cadence + 4 success metrics (cycle time, auto-approved rate, wrong SAP codes, procurement hours freed)
+
+### Controls
+
+- **← / →** or PageUp/PageDown or Space — navigate
+- **Home / End** — jump to first / last slide
+- **Dark** pill (top-right) — toggles theme; persists to `localStorage`
+- **PDF** pill — triggers `window.print()` with one-slide-per-page styling for the PDF deliverable the brief asks for (24h before the live defense)
+- **Hash routing** — `index.html#data` deep-links to a specific slide (useful for live presenting and for screenshots)
+
+### Editing principles (learned the hard way during this session)
+
+- **Schema on Slide 5 must mirror `agent/bom-procurement-agent/bom_procurement_agent/models.py`.** If `models.py` changes, update the slide. Never invent fields the codebase can't back up — the IT Director will check.
+- **Plain English over enterprise jargon.** No "SME", "SSO", "RAID", "Sev-1", "steerco", "smell-tests", "straight-through", "FTE re-deployed". Each was rewritten this session.
+- **No embeddings in the messaging.** Reconciliation is described as agent reasoning + tool lookup + ground-truth map + self-learning loop. Pure agent story.
+- **Audit lives in SAP, not in our console.** Slide 6 explicitly pre-empts the SSO question — we don't introduce a parallel auth system; SAP's existing identity signs every DRAFT → live PO confirmation.
+- **Footers must align across blocks.** On Slide 7, the gate dashed-rule is a separate `::after` pseudo-element pinned to a fixed `bottom` Y, *not* attached to the gate content (which has variable height). Don't undo this.
+
+### What's intentionally out of scope on the deck
+
+- A closing "thank you / Q&A" slide. The deck ends on Slide 8 (Project communication) so the success metrics stay visible during Q&A.
+- Live SAP commit. The pilot writes DRAFT POs only; live commit is post-pilot.
+- Any non-steel commodity, CAD-drawing OCR beyond exported PDF text, or live SSO discussion.
